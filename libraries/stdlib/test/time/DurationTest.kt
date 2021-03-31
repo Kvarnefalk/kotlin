@@ -35,7 +35,7 @@ class DurationTest {
             assertEquals(-expected, -value.toDuration(DurationUnit.NANOSECONDS).inWholeNanoseconds)
         }
         // any int value of small units can always be represented in nanoseconds
-        for (unit in DurationUnit.values().filter { it <= DurationUnit.SECONDS }) {
+        for (unit in units.filter { it <= DurationUnit.SECONDS }) {
             val scale = convertDurationUnit(1L, unit, DurationUnit.NANOSECONDS)
             repeat(100) {
                 val value = Random.nextInt()
@@ -188,7 +188,7 @@ class DurationTest {
             assertAlmostEquals(Duration.convert(value.toDouble(), unit, unit2), value.toDuration(unit).toDouble(unit2))
         }
 
-        for (unit in DurationUnit.values()) {
+        for (unit in units) {
             assertEquals(Long.MAX_VALUE, Duration.INFINITE.toLong(unit))
             assertEquals(Int.MAX_VALUE, Duration.INFINITE.toInt(unit))
             assertEquals(Double.POSITIVE_INFINITY, Duration.INFINITE.toDouble(unit))
@@ -208,7 +208,7 @@ class DurationTest {
             val ns = Random.nextInt(1e9.toInt())
             (Duration.days(d) + Duration.hours(h) + Duration.minutes(m) + Duration.seconds(s) + Duration.nanoseconds(ns)).run {
                 toComponents { seconds, nanoseconds ->
-                    assertEquals( d.toLong() * 86400 + h * 3600 + m * 60 + s, seconds)
+                    assertEquals(d.toLong() * 86400 + h * 3600 + m * 60 + s, seconds)
                     assertEquals(ns, nanoseconds)
                 }
                 toComponents { minutes, seconds, nanoseconds ->
