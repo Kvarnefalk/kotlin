@@ -2651,6 +2651,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/definitelyNotNullAndOriginalType.kt");
         }
 
+        @TestMetadata("doubleGenericDiamond.kt")
+        public void testDoubleGenericDiamond() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
+        }
+
         @TestMetadata("falseIntersection.kt")
         public void testFalseIntersection() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/falseIntersection.kt");

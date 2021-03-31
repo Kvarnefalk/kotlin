@@ -98,18 +98,18 @@ class FirTypeIntersectionScope private constructor(
         for ((member, scope) in allMembersWithScope) {
             @Suppress("UNCHECKED_CAST")
             if (member is FirNamedFunctionSymbol) {
-                scope.processOverriddenFunctions(member) {
+                scope.processOverriddenFunctions(member.fir.unwrapSubstitutionOverrides().symbol) {
                     baseMembers += it as D
                     ProcessorAction.NEXT
                 }
             } else if (member is FirPropertySymbol) {
-                scope.processOverriddenProperties(member) {
+                scope.processOverriddenProperties(member.fir.unwrapSubstitutionOverrides().symbol) {
                     baseMembers += it as D
                     ProcessorAction.NEXT
                 }
             }
         }
-        allMembersWithScope.removeIf { (member, _) -> member in baseMembers }
+        allMembersWithScope.removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
 
         while (allMembersWithScope.isNotEmpty()) {
             val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)

@@ -3000,6 +3000,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             }
 
             @Test
+            @TestMetadata("doubleGenericDiamond.kt")
+            public void testDoubleGenericDiamond() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/doubleGenericDiamond.kt");
+            }
+
+            @Test
             @TestMetadata("falseIntersection.kt")
             public void testFalseIntersection() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/falseIntersection.kt");
