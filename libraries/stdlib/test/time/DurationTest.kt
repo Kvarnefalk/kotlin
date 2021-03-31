@@ -421,6 +421,8 @@ class DurationTest {
         assertEquals(Duration.INFINITE, -Duration.seconds(1) / (-0.0))
 
         assertEquals(Duration.INFINITE, Duration.INFINITE / Int.MAX_VALUE)
+        assertEquals(Duration.INFINITE, -Duration.INFINITE / Int.MIN_VALUE)
+        assertEquals(-Duration.INFINITE, Duration.INFINITE / -1)
         assertEquals(Duration.INFINITE, Duration.INFINITE / Double.MAX_VALUE)
 
         assertFailsWith<IllegalArgumentException> { Duration.INFINITE / Double.POSITIVE_INFINITY }

@@ -332,7 +332,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
             return durationOfNanos(value / scale)
         } else {
             if (isInfinite())
-                return (toDouble(storageUnit) / scale).toDuration(storageUnit)
+                return this * scale.sign
 
             val result = value / scale
 
