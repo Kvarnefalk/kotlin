@@ -84,7 +84,7 @@ class FirRenderer : FirVisitorVoid() {
     fun foo(expression: FirWhenExpression) {
         val variable = expression.subjectVariable
         if (variable != null) {
-            variable.<!INAPPLICABLE_CANDIDATE!>accept<!>(this)
+            variable.accept(this)
         }
     }
 }

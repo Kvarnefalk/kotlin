@@ -91,37 +91,36 @@ class FirTypeIntersectionScope private constructor(
             members.map { MemberWithBaseScope(it, scope) }
         }
 
-        val baseMembers = mutableSetOf<D>()
-        if (allMembersWithScope.size > 1) {
-            // TODO: may be this processing can be shortened
-            // e.g. by looking only through direct overridden symbols
-            // or may be we can move it to the later phase
-            for ((member, scope) in allMembersWithScope) {
-                @Suppress("UNCHECKED_CAST")
-                if (member is FirNamedFunctionSymbol) {
-                    scope.processOverriddenFunctions(member.fir.unwrapSubstitutionOverrides().symbol) {
-                        baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
-                        ProcessorAction.NEXT
-                    }
-                } else if (member is FirPropertySymbol) {
-                    scope.processOverriddenProperties(member.fir.unwrapSubstitutionOverrides().symbol) {
-                        baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
-                        ProcessorAction.NEXT
-                    }
-                }
-            }
-            allMembersWithScope.removeIf { (member, _) -> member in baseMembers }
-            if (allMembersWithScope.size > 1) {
-                allMembersWithScope.removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
-            }
-        }
-
         while (allMembersWithScope.size > 1) {
             val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)
             val extractBothWaysWithPrivate = extractBothWaysOverridable(maxByVisibility, allMembersWithScope)
-            val extractedOverrides = extractBothWaysWithPrivate.filterNot {
+            val extractedOverrides = extractBothWaysWithPrivate.filterNotTo(mutableListOf()) {
                 Visibilities.isPrivate((it.member.fir as FirMemberDeclaration).visibility)
             }.takeIf { it.isNotEmpty() } ?: extractBothWaysWithPrivate
+            if (extractedOverrides.size > 1) {
+                val baseMembers = mutableSetOf<D>()
+                // TODO: may be this processing can be shortened
+                // e.g. by looking only through direct overridden symbols
+                // or may be we can move it to the later phase
+                for ((member, scope) in extractedOverrides) {
+                    @Suppress("UNCHECKED_CAST")
+                    if (member is FirNamedFunctionSymbol) {
+                        scope.processOverriddenFunctions(member.fir.unwrapSubstitutionOverrides().symbol) {
+                            baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
+                            ProcessorAction.NEXT
+                        }
+                    } else if (member is FirPropertySymbol) {
+                        scope.processOverriddenProperties(member.fir.unwrapSubstitutionOverrides().symbol) {
+                            baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
+                            ProcessorAction.NEXT
+                        }
+                    }
+                }
+                extractedOverrides.removeIf { (member, _) -> member in baseMembers }
+                if (extractedOverrides.size > 1) {
+                    extractedOverrides.removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
+                }
+            }
 
             val (mostSpecific, scopeForMostSpecific) = selectMostSpecificMember(extractedOverrides)
             if (extractedOverrides.size > 1 &&
@@ -440,7 +439,7 @@ class FirTypeIntersectionScope private constructor(
     private fun <D : FirCallableSymbol<*>> extractBothWaysOverridable(
         overrider: MemberWithBaseScope<D>,
         members: MutableCollection<MemberWithBaseScope<D>>
-    ): Collection<MemberWithBaseScope<D>> {
+    ): MutableList<MemberWithBaseScope<D>> {
         val result = mutableListOf<MemberWithBaseScope<D>>().apply { add(overrider) }
 
         val iterator = members.iterator()
