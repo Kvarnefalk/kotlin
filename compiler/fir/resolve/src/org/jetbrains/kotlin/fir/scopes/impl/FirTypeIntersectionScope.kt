@@ -99,12 +99,12 @@ class FirTypeIntersectionScope private constructor(
             @Suppress("UNCHECKED_CAST")
             if (member is FirNamedFunctionSymbol) {
                 scope.processOverriddenFunctions(member.fir.unwrapSubstitutionOverrides().symbol) {
-                    baseMembers += it as D
+                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
                     ProcessorAction.NEXT
                 }
             } else if (member is FirPropertySymbol) {
                 scope.processOverriddenProperties(member.fir.unwrapSubstitutionOverrides().symbol) {
-                    baseMembers += it as D
+                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
                     ProcessorAction.NEXT
                 }
             }
