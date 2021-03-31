@@ -7,7 +7,6 @@
 #define RUNTIME_MM_MARK_AND_SWEEP_UTILS_H
 
 #include "../ExtraObjectData.hpp"
-#include "../ThreadRegistry.hpp"
 #include "FinalizerHooks.hpp"
 #include "Memory.h"
 #include "ObjectTraversal.hpp"
@@ -72,15 +71,6 @@ typename Traits::ObjectFactory::FinalizerQueue Sweep(typename Traits::ObjectFact
     }
 
     return finalizerQueue;
-}
-
-template <typename Traits>
-void Finalize(typename Traits::ObjectFactory::FinalizerQueue finalizerQueue) noexcept {
-    // TODO: This probably should check for the existence of runtime itself, but unit tests initialize only memory.
-    RuntimeAssert(mm::ThreadRegistry::Instance().CurrentThreadData() != nullptr, "Finalizers need a Kotlin runtime");
-    for (auto node : finalizerQueue) {
-        RunFinalizers(node->IsArray() ? node->GetArrayHeader()->obj() : node->GetObjHeader());
-    }
 }
 
 } // namespace mm

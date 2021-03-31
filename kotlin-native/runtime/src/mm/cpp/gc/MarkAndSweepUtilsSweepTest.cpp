@@ -169,9 +169,7 @@ class MarkAndSweepUtilsSweepTest : public ::testing::Test {
 public:
     ~MarkAndSweepUtilsSweepTest() override {
         for (auto& finalizerQueue : finalizers_) {
-            for (auto node : finalizerQueue) {
-                RunFinalizers(node->IsArray() ? node->GetArrayHeader()->obj() : node->GetObjHeader());
-            }
+            finalizerQueue.Finalize();
         }
         testing::Mock::VerifyAndClear(&finalizerHook());
         // TODO: Figure out a better way to clear up the stuff.
@@ -188,7 +186,7 @@ public:
     KStdVector<ObjHeader*> Sweep() {
         auto finalizers = mm::Sweep<SweepTraits>(objectFactory_);
         KStdVector<ObjHeader*> objects;
-        for (auto node : finalizers) {
+        for (auto node : finalizers.IterForTests()) {
             objects.push_back(node.IsArray() ? node.GetArrayHeader()->obj() : node.GetObjHeader());
         }
         finalizers_.push_back(std::move(finalizers));

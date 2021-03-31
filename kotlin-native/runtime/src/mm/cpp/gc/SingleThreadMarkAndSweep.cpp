@@ -8,6 +8,7 @@
 #include "../GlobalData.hpp"
 #include "../RootSet.hpp"
 #include "../ThreadData.hpp"
+#include "../ThreadRegistry.hpp"
 #include "MarkAndSweepUtils.hpp"
 #include "Memory.h"
 #include "Runtime.h"
@@ -111,5 +112,7 @@ void mm::SingleThreadMarkAndSweep::PerformFullGC() noexcept {
     running_ = false;
 
     // TODO: These will actually need to be run on a separate thread.
-    mm::Finalize<FinalizeTraits>(std::move(finalizerQueue));
+    // TODO: This probably should check for the existence of runtime itself, but unit tests initialize only memory.
+    RuntimeAssert(mm::ThreadRegistry::Instance().CurrentThreadData() != nullptr, "Finalizers need a Kotlin runtime");
+    finalizerQueue.Finalize();
 }

@@ -13,6 +13,7 @@
 
 #include "Alignment.hpp"
 #include "Alloc.h"
+#include "FinalizerHooks.hpp"
 #include "Memory.h"
 #include "Mutex.hpp"
 #include "Types.h"
@@ -586,8 +587,27 @@ public:
             typename Storage::Consumer::Iterator iterator_;
         };
 
-        Iterator begin() noexcept { return Iterator(consumer_.begin()); }
-        Iterator end() noexcept { return Iterator(consumer_.end()); }
+        class Iterable {
+        public:
+            Iterator begin() noexcept { return Iterator(owner_.consumer_.begin()); }
+            Iterator end() noexcept { return Iterator(owner_.consumer_.end()); }
+
+        private:
+            friend class FinalizerQueue;
+
+            explicit Iterable(FinalizerQueue& owner) : owner_(owner) {}
+
+            FinalizerQueue& owner_;
+        };
+
+        // TODO: Consider running it in the destructor instead.
+        void Finalize() noexcept {
+            for (auto node : Iterable(*this)) {
+                RunFinalizers(node->IsArray() ? node->GetArrayHeader()->obj() : node->GetObjHeader());
+            }
+        }
+
+        Iterable IterForTests() noexcept { return Iterable(*this); }
 
     private:
         friend class ObjectFactory;
