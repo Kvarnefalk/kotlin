@@ -3076,6 +3076,12 @@ public class FirDiagnosticTestGenerated extends AbstractFirDiagnosticTest {
             public void testSecondaryConstructorCfg() throws Exception {
                 runTest("compiler/fir/analysis-tests/testData/resolve/problems/secondaryConstructorCfg.kt");
             }
+
+            @Test
+            @TestMetadata("transform.kt")
+            public void testTransform() throws Exception {
+                runTest("compiler/fir/analysis-tests/testData/resolve/problems/transform.kt");
+            }
         }
 
         @Nested

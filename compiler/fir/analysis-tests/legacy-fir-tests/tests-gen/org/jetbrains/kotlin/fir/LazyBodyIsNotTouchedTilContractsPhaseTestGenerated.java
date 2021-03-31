@@ -2715,6 +2715,11 @@ public class LazyBodyIsNotTouchedTilContractsPhaseTestGenerated extends Abstract
         public void testSecondaryConstructorCfg() throws Exception {
             runTest("compiler/fir/analysis-tests/testData/resolve/problems/secondaryConstructorCfg.kt");
         }
+
+        @TestMetadata("transform.kt")
+        public void testTransform() throws Exception {
+            runTest("compiler/fir/analysis-tests/testData/resolve/problems/transform.kt");
+        }
     }
 
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/properties")
