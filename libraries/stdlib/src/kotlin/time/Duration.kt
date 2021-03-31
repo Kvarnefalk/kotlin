@@ -219,26 +219,29 @@ public value class Duration internal constructor(private val rawValue: Long) : C
             other.isInfinite() -> return other
         }
 
-        return if (this.unitDiscriminator == other.unitDiscriminator) {
-            val result = this.value + other.value // never overflows long, but can overflow long63
-            when {
-                isInNanos() ->
-                    durationOfNanosNormalized(result)
-                else ->
-                    durationOfMillisNormalized(result)
+        return when {
+            this.unitDiscriminator == other.unitDiscriminator -> {
+                val result = this.value + other.value // never overflows long, but can overflow long63
+                when {
+                    isInNanos() ->
+                        durationOfNanosNormalized(result)
+                    else ->
+                        durationOfMillisNormalized(result)
+                }
             }
-        } else {
-            addValuesMixedRanges(this.value, other.value, this.isInMillis())
+            this.isInMillis() ->
+                addValuesMixedRanges(this.value, other.value)
+            else ->
+                addValuesMixedRanges(other.value, this.value)
         }
     }
 
-    private fun addValuesMixedRanges(a: Long, b: Long, aInMillis: Boolean): Duration {
-        if (!aInMillis) return addValuesMixedRanges(b, a, true)
-        val bMillis = nanosToMillis(b)
-        val resultMillis = a + bMillis
+    private fun addValuesMixedRanges(thisMillis: Long, otherNanos: Long): Duration {
+        val otherMillis = nanosToMillis(otherNanos)
+        val resultMillis = thisMillis + otherMillis
         return if (resultMillis in -MAX_NANOS_IN_MILLIS..MAX_NANOS_IN_MILLIS) {
-            val bRemainder = b - millisToNanos(bMillis)
-            durationOfNanos(millisToNanos(resultMillis) + bRemainder)
+            val otherNanoRemainder = otherNanos - millisToNanos(otherMillis)
+            durationOfNanos(millisToNanos(resultMillis) + otherNanoRemainder)
         } else {
             durationOfMillis(resultMillis.coerceIn(-MAX_MILLIS, MAX_MILLIS))
         }

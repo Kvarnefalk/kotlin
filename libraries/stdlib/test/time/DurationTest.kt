@@ -331,6 +331,7 @@ class DurationTest {
         assertEquals(Duration.milliseconds(850), Duration.seconds(1) - Duration.milliseconds(150))
         assertEquals(Duration.milliseconds(1150), Duration.seconds(1) - Duration.milliseconds(-150))
         assertEquals(Duration.milliseconds(1), Duration.microseconds(Long.MAX_VALUE) - Duration.microseconds(Long.MAX_VALUE - 1_000))
+        assertEquals(Duration.milliseconds(-1), Duration.microseconds(Long.MAX_VALUE - 1_000) - Duration.microseconds(Long.MAX_VALUE))
 
         run {
             val offset = 2L * NANOS_IN_MILLIS
