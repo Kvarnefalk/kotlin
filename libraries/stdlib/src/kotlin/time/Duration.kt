@@ -604,11 +604,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      *
      * The range of durations that can be expressed as a `Long` number of milliseconds is approximately ±292 million years.
      */
-    // TODO: Deprecate in favor inWholeMilliseconds
     @Deprecated("Use inWholeMilliseconds property instead.", ReplaceWith("this.inWholeMilliseconds"))
-    public fun toLongMilliseconds(): Long {
-        return if (isInMillis() && isFinite()) value else toLong(DurationUnit.MILLISECONDS)
-    }
+    public fun toLongMilliseconds(): Long = inWholeMilliseconds
 
     /**
      * Returns a string representation of this duration value expressed in the unit which yields the most compact and readable number value.
