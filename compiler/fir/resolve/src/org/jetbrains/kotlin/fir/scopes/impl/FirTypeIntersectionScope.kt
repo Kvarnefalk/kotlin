@@ -92,26 +92,31 @@ class FirTypeIntersectionScope private constructor(
         }
 
         val baseMembers = mutableSetOf<D>()
-        // TODO: may be this processing can be shortened
-        // e.g. by looking only through direct overridden symbols
-        // or may be we can move it to the later phase
-        for ((member, scope) in allMembersWithScope) {
-            @Suppress("UNCHECKED_CAST")
-            if (member is FirNamedFunctionSymbol) {
-                scope.processOverriddenFunctions(member.fir.unwrapSubstitutionOverrides().symbol) {
-                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
-                    ProcessorAction.NEXT
-                }
-            } else if (member is FirPropertySymbol) {
-                scope.processOverriddenProperties(member.fir.unwrapSubstitutionOverrides().symbol) {
-                    baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
-                    ProcessorAction.NEXT
+        if (allMembersWithScope.size > 1) {
+            // TODO: may be this processing can be shortened
+            // e.g. by looking only through direct overridden symbols
+            // or may be we can move it to the later phase
+            for ((member, scope) in allMembersWithScope) {
+                @Suppress("UNCHECKED_CAST")
+                if (member is FirNamedFunctionSymbol) {
+                    scope.processOverriddenFunctions(member.fir.unwrapSubstitutionOverrides().symbol) {
+                        baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
+                        ProcessorAction.NEXT
+                    }
+                } else if (member is FirPropertySymbol) {
+                    scope.processOverriddenProperties(member.fir.unwrapSubstitutionOverrides().symbol) {
+                        baseMembers += it.fir.unwrapSubstitutionOverrides().symbol as D
+                        ProcessorAction.NEXT
+                    }
                 }
             }
+            allMembersWithScope.removeIf { (member, _) -> member in baseMembers }
+            if (allMembersWithScope.size > 1) {
+                allMembersWithScope.removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
+            }
         }
-        allMembersWithScope.removeIf { (member, _) -> member.fir.unwrapSubstitutionOverrides().symbol in baseMembers }
 
-        while (allMembersWithScope.isNotEmpty()) {
+        while (allMembersWithScope.size > 1) {
             val maxByVisibility = findMemberWithMaxVisibility(allMembersWithScope)
             val extractBothWaysWithPrivate = extractBothWaysOverridable(maxByVisibility, allMembersWithScope)
             val extractedOverrides = extractBothWaysWithPrivate.filterNot {
@@ -150,6 +155,12 @@ class FirTypeIntersectionScope private constructor(
                 overriddenSymbols[mostSpecific] = extractedOverrides
                 processor(mostSpecific)
             }
+        }
+
+        if (allMembersWithScope.isNotEmpty()) {
+            val single = allMembersWithScope.single().member
+            overriddenSymbols[single] = allMembersWithScope.toList()
+            processor(single)
         }
 
         return true

@@ -85,5 +85,5 @@ FILE: transform.kt
     }
     public final fun <F : R|FirClass<F>|> R|F|.runSupertypeResolvePhaseForLocalClass(): R|F| {
         lval applySupertypesTransformer: R|FirApplySupertypesTransformer| = R|/FirApplySupertypesTransformer.FirApplySupertypesTransformer|()
-        ^runSupertypeResolvePhaseForLocalClass this@R|/runSupertypeResolvePhaseForLocalClass|.<Unresolved name: transform>#<R|F|, R|kotlin/Nothing?|>(R|<local>/applySupertypesTransformer|, Null(null)).<Unresolved name: single>#
+        ^runSupertypeResolvePhaseForLocalClass this@R|/runSupertypeResolvePhaseForLocalClass|.R|SubstitutionOverride</FirClass.transform: R|CompositeTransformResult<E>|>|<R|F|, R|kotlin/Nothing?|>(R|<local>/applySupertypesTransformer|, Null(null)).R|SubstitutionOverride</CompositeTransformResult.single: R|F|>|
     }

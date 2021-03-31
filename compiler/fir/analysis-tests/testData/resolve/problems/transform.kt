@@ -41,5 +41,5 @@ private class FirApplySupertypesTransformer() : FirTransformer<Nothing?>()
 
 fun <F : FirClass<F>> F.runSupertypeResolvePhaseForLocalClass(): F {
     val applySupertypesTransformer = FirApplySupertypesTransformer()
-    return this.<!UNRESOLVED_REFERENCE!>transform<!><F, Nothing?>(applySupertypesTransformer, null).single
+    return this.transform<F, Nothing?>(applySupertypesTransformer, null).single
 }
