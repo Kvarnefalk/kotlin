@@ -385,6 +385,11 @@ class DurationTest {
             assertEquals(Duration.INFINITE, Duration.nanoseconds(Long.MAX_VALUE / 1000 + 1) * 1_000_000_000)
         }
 
+        run {
+            val value = MAX_NANOS / Int.MAX_VALUE
+            assertTrue((Duration.nanoseconds(value) * Int.MIN_VALUE).inWholeNanoseconds < -MAX_NANOS)
+        }
+
         assertEquals(Duration.INFINITE, Duration.days(Int.MAX_VALUE) * Int.MAX_VALUE)
         assertEquals(-Duration.INFINITE, Duration.days(Int.MAX_VALUE) * Int.MIN_VALUE)
 

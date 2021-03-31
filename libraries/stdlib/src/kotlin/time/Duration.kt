@@ -269,7 +269,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         val value = value
         val result = value * scale
         return if (isInNanos()) {
-            if (value in (MAX_NANOS / Int.MIN_VALUE)..(MAX_NANOS / Int.MAX_VALUE)) {
+            if (value in (MAX_NANOS / Int.MIN_VALUE)..(-MAX_NANOS / Int.MIN_VALUE)) {
                 // can't overflow nanos range for any scale
                 durationOfNanos(result)
             } else {
