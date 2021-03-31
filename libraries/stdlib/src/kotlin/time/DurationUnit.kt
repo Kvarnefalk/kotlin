@@ -53,9 +53,11 @@ public expect enum class DurationUnit {
 internal expect fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double
 
 // overflow result is unspecified
+@SinceKotlin("1.5")
 @ExperimentalTime
 internal expect fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long
 
+@SinceKotlin("1.5")
 @ExperimentalTime
 internal expect fun convertDurationUnitClamping(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long
 

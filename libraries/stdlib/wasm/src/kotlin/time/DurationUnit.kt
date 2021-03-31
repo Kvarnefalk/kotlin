@@ -49,8 +49,10 @@ public actual enum class DurationUnit {
 @ExperimentalTime
 internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double = TODO("Wasm stdlib: convertDurationUnit Double")
 
+@SinceKotlin("1.5")
 @ExperimentalTime
 internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnit Long")
 
+@SinceKotlin("1.5")
 @ExperimentalTime
 internal actual fun convertDurationUnitClamping(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnitClamping")
