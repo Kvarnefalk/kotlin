@@ -87,7 +87,7 @@ class DurationTest {
             }
         }
 
-        run { // invariant Duration.nanoseconds(d.toLongNanoseconds()) == d when duration does not overflow nanoseconds
+        run { // invariant Duration.nanoseconds(d.inWholeNanoseconds) == d when whole nanoseconds fits into Long range
             val d1 = Duration.nanoseconds(MAX_NANOS + 1)
             val d2 = Duration.nanoseconds(d1.inWholeNanoseconds)
             assertEquals(d1.inWholeNanoseconds, d2.inWholeNanoseconds)
