@@ -387,7 +387,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
             return this.rawValue.compareTo(other.rawValue)
         // same sign/different ranges
         val r = this.unitDiscriminator - other.unitDiscriminator // compare ranges
-        return if (this.rawValue < 0) -r else r
+        return if (isNegative()) -r else r
     }
 
 

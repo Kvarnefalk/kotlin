@@ -97,24 +97,28 @@ class DurationTest {
 
     @Test
     fun comparison() {
-        run {
-            val d4 = Duration.nanoseconds(Long.MAX_VALUE)
-            val d3 = Duration.nanoseconds(MAX_NANOS + 1)
-            val d2 = Duration.nanoseconds(MAX_NANOS)
-            val d1 = Duration.nanoseconds(MAX_NANOS - 1)
-
-            assertTrue(d4 > d2, "same sign, different ranges")
-            assertTrue(d3 > d2, "same sign, different ranges 2")
-            assertTrue(d3.inWholeNanoseconds >= d2.inWholeNanoseconds)
-
-            assertTrue(d2 > d1, "same sign, same range nanos")
-
-            assertTrue(d4 > d3, "same sign, same range millis")
-
-            assertTrue(d2 > -d3, "different signs, different ranges")
-            assertTrue(d3 > -d4, "different signs, same ranges")
-            assertTrue(d1 > -d2, "different signs, same ranges 2")
+        fun assertGreater(d1: Duration, d2: Duration, message: String) {
+            assertTrue(d1 > d2, message)
+            assertFalse(d1 <= d2, message)
+            assertTrue(
+                d1.inWholeNanoseconds > d2.inWholeNanoseconds ||
+                        d1.inWholeNanoseconds == d2.inWholeNanoseconds && d1.inWholeMilliseconds > d2.inWholeMilliseconds,
+                message
+            )
         }
+
+        val d4 = Duration.nanoseconds(Long.MAX_VALUE)
+        val d3 = Duration.nanoseconds(MAX_NANOS + 1)
+        val d2 = Duration.nanoseconds(MAX_NANOS)
+        val d1 = Duration.nanoseconds(MAX_NANOS - 1)
+
+        assertGreater(d4, d2, "same sign, different ranges")
+        assertGreater(d3, d2, "same sign, different ranges 2")
+        assertGreater(d2, d1, "same sign, same range nanos")
+        assertGreater(d4, d3, "same sign, same range millis")
+        assertGreater(d2, -d3, "different signs, different ranges")
+        assertGreater(d3, -d4, "different signs, same ranges")
+        assertGreater(d1, -d2, "different signs, same ranges 2")
     }
 
 
