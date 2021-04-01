@@ -389,8 +389,7 @@ TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithPermanentMiddle) {
 
     Mark({root});
 
-    EXPECT_MARKED(
-            root, root_field3, root_field3_element1, root_field3_element2, root_field3_element3);
+    EXPECT_MARKED(root, root_field3, root_field3_element1, root_field3_element2, root_field3_element3);
 }
 
 TEST_F(MarkAndSweepUtilsMarkTest, MarkTreeWithPermanentLeaf) {

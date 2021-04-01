@@ -206,7 +206,10 @@ TEST_F(SingleThreadMarkAndSweepTest, RootSet) {
         StackObjectArrayHolder stack2{threadData};
         StackCharArrayHolder stack3{threadData};
 
-        ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
+        ASSERT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(
+                        global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
         ASSERT_THAT(GetColor(global1.header()), Color::kWhite);
         ASSERT_THAT(GetColor(global2.header()), Color::kWhite);
         ASSERT_THAT(GetColor(global3.header()), Color::kWhite);
@@ -216,7 +219,10 @@ TEST_F(SingleThreadMarkAndSweepTest, RootSet) {
 
         threadData.gc().PerformFullGC();
 
-        EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(
+                        global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
         EXPECT_THAT(GetColor(global1.header()), Color::kWhite);
         EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
         EXPECT_THAT(GetColor(global3.header()), Color::kWhite);
@@ -246,7 +252,10 @@ TEST_F(SingleThreadMarkAndSweepTest, InterconnectedRootSet) {
         stack2[0] = stack1.header();
         stack2[1] = stack3.header();
 
-        ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
+        ASSERT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(
+                        global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
         ASSERT_THAT(GetColor(global1.header()), Color::kWhite);
         ASSERT_THAT(GetColor(global2.header()), Color::kWhite);
         ASSERT_THAT(GetColor(global3.header()), Color::kWhite);
@@ -256,7 +265,10 @@ TEST_F(SingleThreadMarkAndSweepTest, InterconnectedRootSet) {
 
         threadData.gc().PerformFullGC();
 
-        EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
+        EXPECT_THAT(
+                Alive(threadData),
+                testing::UnorderedElementsAre(
+                        global1.header(), global2.header(), global3.header(), stack1.header(), stack2.header(), stack3.header()));
         EXPECT_THAT(GetColor(global1.header()), Color::kWhite);
         EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
         EXPECT_THAT(GetColor(global3.header()), Color::kWhite);
