@@ -26,14 +26,13 @@ private val DIRECTIVE_PATTERN = Pattern.compile("^//\\s*[!]?([A-Z_]+)(:[ \\t]*(.
  *
  * @return list of test files [TestFile] to be compiled
  */
-fun buildCompileList(source: Path, outputDirectory: String): List<TestFile> {
+fun buildCompileList(source: Path, outputDirectory: String, defaultModule: TestModule): List<TestFile> {
     val result = mutableListOf<TestFile>()
     val srcFile = source.toFile()
     // Remove diagnostic parameters in external tests.
     val srcText = srcFile.readText().replace(Regex("<!.*?!>(.*?)<!>")) { match -> match.groupValues[1] }
 
     val supportModule = srcText.contains("// WITH_COROUTINES")
-    val defaultModule = TestModule.default()
     val moduleMatcher = MODULE_PATTERN.matcher(srcText)
     val fileMatcher = FILE_PATTERN.matcher(srcText)
     var nextModuleExists = moduleMatcher.find()
@@ -42,6 +41,9 @@ fun buildCompileList(source: Path, outputDirectory: String): List<TestFile> {
     if (!nextModuleExists && !nextFileExists) {
         // There is only one file in the input
         result.add(TestFile(srcFile.name, "$outputDirectory/${srcFile.name}", srcText, defaultModule))
+        if (supportModule) {
+            defaultModule.dependencies.add("support")
+        }
     } else {
         // There are several files
         var processedChars = 0
@@ -56,12 +58,13 @@ fun buildCompileList(source: Path, outputDirectory: String): List<TestFile> {
                 if (moduleName != null) {
                     moduleName = moduleName.trim { it <= ' ' }
                     val dependencies = mutableListOf<String>().apply {
-                        addAll(moduleDependencies.parseModuleList())
+                        addAll(moduleDependencies.parseModuleList()
+                                .map {
+                                    if (it != "support") "${srcFile.name}.$it" else it
+                                })
                         if (supportModule && !contains("support")) {
                             add("support")
                         }
-                    }.map {
-                        if (it != "support") "${srcFile.name}.$it" else it
                     }
                     module = TestModule("${srcFile.name}.$moduleName",
                         dependencies,
@@ -112,7 +115,7 @@ private fun String?.parseModuleList() = this
  */
 data class TestModule(
     val name: String,
-    val dependencies: List<String>,
+    val dependencies: MutableList<String>,
     val friends: List<String>
 ) {
     val files = mutableListOf<TestFile>()
@@ -123,8 +126,8 @@ data class TestModule(
     fun versionFiles(version: Int) = this.files.filter { it.version == null || it.version == version }
 
     companion object {
-        @JvmStatic fun default() = TestModule("default", emptyList(), emptyList())
-        @JvmStatic fun support() = TestModule("support", emptyList(), emptyList())
+        @JvmStatic fun default() = TestModule("default", mutableListOf<String>(), emptyList())
+        @JvmStatic fun support() = TestModule("support", mutableListOf<String>(), emptyList())
     }
 }
 
