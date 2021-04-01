@@ -206,7 +206,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is the sum of this and [other] duration values.
      *
-     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
+     * e.g. when adding infinite durations of different sign.
      */
     public operator fun plus(other: Duration): Duration {
         when {
@@ -250,14 +251,16 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is the difference between this and [other] duration values.
      *
-     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
+     * e.g. when subtracting infinite durations of the same sign.
      */
     public operator fun minus(other: Duration): Duration = this + (-other)
 
     /**
      * Returns a duration whose value is this duration value multiplied by the given [scale] number.
      *
-     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
+     * e.g. when multiplying an infinite duration by zero.
      */
     public operator fun times(scale: Int): Duration {
         if (isInfinite()) {
@@ -302,7 +305,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is this duration value multiplied by the given [scale] number.
      *
-     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
+     * e.g. when multiplying an infinite duration by zero.
      */
     public operator fun times(scale: Double): Duration {
         val intScale = scale.roundToInt()
@@ -318,7 +322,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is this duration value divided by the given [scale] number.
      *
-     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
+     * e.g. when dividing zero duration by zero.
      */
     public operator fun div(scale: Int): Duration {
         if (scale == 0) {
@@ -347,7 +352,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     /**
      * Returns a duration whose value is this duration value divided by the given [scale] number.
      *
-     * @throws IllegalArgumentException if the operation results in a `NaN` value.
+     * @throws IllegalArgumentException if the operation results in an undefined value for the given arguments,
+     * e.g. when dividing an infinite duration by infinity or zero duration by zero.
      */
     public operator fun div(scale: Double): Duration {
         val intScale = scale.roundToInt()
