@@ -66,6 +66,23 @@ private:
     ObjHeader* location_;
 };
 
+// TODO: Clean GlobalPermanentObjectHolder after it's gone.
+class GlobalPermanentObjectHolder : private Pinned {
+public:
+    explicit GlobalPermanentObjectHolder(mm::ThreadData& threadData) {
+        mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &global_);
+    }
+
+    ObjHeader* header() { return global_; }
+
+    test_support::Object<Payload>& operator*() { return object_; }
+    test_support::Object<Payload>& operator->() { return object_; }
+
+private:
+    test_support::Object<Payload> object_{typeHolder.typeInfo()};
+    ObjHeader* global_{object_.header()};
+};
+
 // TODO: Clean GlobalObjectArrayHolder after it's gone.
 class GlobalObjectArrayHolder : private Pinned {
 public:
@@ -105,6 +122,7 @@ private:
 class StackObjectHolder : private Pinned {
 public:
     explicit StackObjectHolder(mm::ThreadData& threadData) { mm::AllocateObject(&threadData, typeHolder.typeInfo(), holder_.slot()); }
+    explicit StackObjectHolder(test_support::Object<Payload>& object) : holder_(object.header()) {}
 
     ObjHeader* header() { return holder_.obj(); }
 
@@ -516,7 +534,7 @@ TEST_F(SingleThreadMarkAndSweepTest, ObjectsWithCyclesIntoRootSet) {
     });
 }
 
-TEST_F(SingleThreadMarkAndSweepTest, ObjectsRunGCTwice) {
+TEST_F(SingleThreadMarkAndSweepTest, RunGCTwice) {
     RunInNewThread([](mm::ThreadData& threadData) {
         GlobalObjectHolder global{threadData};
         StackObjectHolder stack{threadData};
@@ -563,5 +581,45 @@ TEST_F(SingleThreadMarkAndSweepTest, ObjectsRunGCTwice) {
         EXPECT_THAT(GetColor(object2.header()), Color::kWhite);
         EXPECT_THAT(GetColor(object3.header()), Color::kWhite);
         EXPECT_THAT(GetColor(object4.header()), Color::kWhite);
+    });
+}
+
+TEST_F(SingleThreadMarkAndSweepTest, PermanentObjects) {
+    RunInNewThread([](mm::ThreadData& threadData) {
+        GlobalPermanentObjectHolder global1{threadData};
+        GlobalObjectHolder global2{threadData};
+        test_support::Object<Payload> permanentObject{typeHolder.typeInfo()};
+
+        global1->field1 = permanentObject.header();
+        global2->field1 = global1.header();
+
+        ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
+        EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
+
+        threadData.gc().PerformFullGC();
+
+        EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global2.header()));
+        EXPECT_THAT(GetColor(global2.header()), Color::kWhite);
+    });
+}
+
+TEST_F(SingleThreadMarkAndSweepTest, SameObjectInRootSet) {
+    RunInNewThread([](mm::ThreadData& threadData) {
+        GlobalObjectHolder global{threadData};
+        StackObjectHolder stack(*global);
+        auto& object = AllocateObject(threadData);
+
+        global->field1 = object.header();
+
+        ASSERT_THAT(global.header(), stack.header());
+        ASSERT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), object.header()));
+        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
+        EXPECT_THAT(GetColor(object.header()), Color::kWhite);
+
+        threadData.gc().PerformFullGC();
+
+        EXPECT_THAT(Alive(threadData), testing::UnorderedElementsAre(global.header(), object.header()));
+        EXPECT_THAT(GetColor(global.header()), Color::kWhite);
+        EXPECT_THAT(GetColor(object.header()), Color::kWhite);
     });
 }
