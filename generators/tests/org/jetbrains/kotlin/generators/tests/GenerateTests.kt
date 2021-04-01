@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.checkers.*
 import org.jetbrains.kotlin.copyright.AbstractUpdateKotlinCopyrightTest
 import org.jetbrains.kotlin.findUsages.*
 import org.jetbrains.kotlin.fir.plugin.AbstractFirAllOpenDiagnosticTest
+import org.jetbrains.kotlin.fir.plugin.AbstractFirKytheDiagnosticTest
 import org.jetbrains.kotlin.formatter.AbstractFormatterTest
 import org.jetbrains.kotlin.formatter.AbstractTypingIndentationTestBase
 import org.jetbrains.kotlin.generators.TestGroup
@@ -1795,6 +1796,12 @@ fun main(args: Array<String>) {
 
         testGroup("plugins/fir/fir-plugin-prototype/tests", "plugins/fir/fir-plugin-prototype/testData") {
             testClass<AbstractFirAllOpenDiagnosticTest> {
+                model("")
+            }
+        }
+
+        testGroup("plugins/fir/fir-plugin-kythe/tests", "plugins/fir/fir-plugin-kythe/testData") {
+            testClass<AbstractFirKytheDiagnosticTest> {
                 model("")
             }
         }
