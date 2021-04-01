@@ -71,6 +71,8 @@ class GlobalPermanentObjectHolder : private Pinned {
 public:
     explicit GlobalPermanentObjectHolder(mm::ThreadData& threadData) {
         mm::GlobalsRegistry::Instance().RegisterStorageForGlobal(&threadData, &global_);
+        global_->typeInfoOrMeta_ = setPointerBits(global_->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        RuntimeAssert(global_->permanent(), "Must be permanent");
     }
 
     ObjHeader* header() { return global_; }
@@ -589,6 +591,8 @@ TEST_F(SingleThreadMarkAndSweepTest, PermanentObjects) {
         GlobalPermanentObjectHolder global1{threadData};
         GlobalObjectHolder global2{threadData};
         test_support::Object<Payload> permanentObject{typeHolder.typeInfo()};
+        permanentObject.header()->typeInfoOrMeta_ = setPointerBits(permanentObject.header()->typeInfoOrMeta_, OBJECT_TAG_PERMANENT_CONTAINER);
+        RuntimeAssert(permanentObject.header()->permanent(), "Must be permanent");
 
         global1->field1 = permanentObject.header();
         global2->field1 = global1.header();
