@@ -25,12 +25,12 @@ internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit,
 
 @SinceKotlin("1.5")
 @ExperimentalTime
-internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
     return targetUnit.convert(value, sourceUnit)
 }
 
 @SinceKotlin("1.5")
 @ExperimentalTime
-internal actual fun convertDurationUnitClamping(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
     return targetUnit.convert(value, sourceUnit)
 }

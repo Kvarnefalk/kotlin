@@ -36,7 +36,7 @@ class DurationTest {
         }
         // any int value of small units can always be represented in nanoseconds
         for (unit in units.filter { it <= DurationUnit.SECONDS }) {
-            val scale = convertDurationUnit(1L, unit, DurationUnit.NANOSECONDS)
+            val scale = convertDurationUnitOverflow(1L, unit, DurationUnit.NANOSECONDS)
             repeat(100) {
                 val value = Random.nextInt()
                 assertEquals(value * scale, value.toDuration(unit).inWholeNanoseconds)

@@ -52,7 +52,7 @@ internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit,
 
 @SinceKotlin("1.5")
 @ExperimentalTime
-internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
     val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
     return when {
         sourceCompareTarget > 0 -> value * (sourceUnit.scale / targetUnit.scale).toLong()
@@ -63,7 +63,7 @@ internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, t
 
 @SinceKotlin("1.5")
 @ExperimentalTime
-internal actual fun convertDurationUnitClamping(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
+internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long {
     val sourceCompareTarget = sourceUnit.scale.compareTo(targetUnit.scale)
     return when {
         sourceCompareTarget > 0 -> {

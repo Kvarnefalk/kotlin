@@ -499,7 +499,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         return when (rawValue) {
             INFINITE.rawValue -> Long.MAX_VALUE
             NEG_INFINITE.rawValue -> Long.MIN_VALUE
-            else -> convertDurationUnitClamping(value, storageUnit, unit)
+            else -> convertDurationUnit(value, storageUnit, unit)
         }
     }
 
@@ -734,7 +734,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
 @ExperimentalTime
 public fun Int.toDuration(unit: DurationUnit): Duration {
     return if (unit <= DurationUnit.SECONDS) {
-        durationOfNanos(convertDurationUnit(this.toLong(), unit, DurationUnit.NANOSECONDS))
+        durationOfNanos(convertDurationUnitOverflow(this.toLong(), unit, DurationUnit.NANOSECONDS))
     } else
         toLong().toDuration(unit)
 }
@@ -743,11 +743,11 @@ public fun Int.toDuration(unit: DurationUnit): Duration {
 @SinceKotlin("1.3")
 @ExperimentalTime
 public fun Long.toDuration(unit: DurationUnit): Duration {
-    val maxNsInUnit = convertDurationUnit(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
+    val maxNsInUnit = convertDurationUnitOverflow(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
     if (this in -maxNsInUnit..maxNsInUnit) {
-        return durationOfNanos(convertDurationUnit(this, unit, DurationUnit.NANOSECONDS))
+        return durationOfNanos(convertDurationUnitOverflow(this, unit, DurationUnit.NANOSECONDS))
     } else {
-        val millis = convertDurationUnitClamping(this, unit, DurationUnit.MILLISECONDS)
+        val millis = convertDurationUnit(this, unit, DurationUnit.MILLISECONDS)
         return durationOfMillisNormalized(millis)
     }
 }

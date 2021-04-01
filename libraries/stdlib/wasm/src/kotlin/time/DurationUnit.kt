@@ -51,8 +51,8 @@ internal actual fun convertDurationUnit(value: Double, sourceUnit: DurationUnit,
 
 @SinceKotlin("1.5")
 @ExperimentalTime
-internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnit Long")
+internal actual fun convertDurationUnitOverflow(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnitOverflow Long")
 
 @SinceKotlin("1.5")
 @ExperimentalTime
-internal actual fun convertDurationUnitClamping(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnitClamping")
+internal actual fun convertDurationUnit(value: Long, sourceUnit: DurationUnit, targetUnit: DurationUnit): Long = TODO("Wasm stdlib: convertDurationUnit Long")
