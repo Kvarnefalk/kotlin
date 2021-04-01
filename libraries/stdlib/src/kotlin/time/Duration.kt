@@ -754,7 +754,7 @@ public fun Long.toDuration(unit: DurationUnit): Duration {
         return durationOfNanos(convertDurationUnitOverflow(this, unit, DurationUnit.NANOSECONDS))
     } else {
         val millis = convertDurationUnit(this, unit, DurationUnit.MILLISECONDS)
-        return durationOfMillisNormalized(millis)
+        return durationOfMillis(millis.coerceIn(-MAX_MILLIS, MAX_MILLIS))
     }
 }
 

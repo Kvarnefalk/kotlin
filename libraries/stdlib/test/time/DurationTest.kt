@@ -43,6 +43,14 @@ class DurationTest {
             }
         }
 
+        for (unit in units) {
+            val borderValue = convertDurationUnit(MAX_NANOS, DurationUnit.NANOSECONDS, unit)
+            val d1 = borderValue.toDuration(unit)
+            val d2 = (borderValue + 1).toDuration(unit)
+            assertNotEquals(d1, d1 + Duration.nanoseconds(1))
+            assertEquals(d2, d2 + Duration.nanoseconds(1))
+        }
+
         assertEquals(Long.MAX_VALUE / 1000, Long.MAX_VALUE.toDuration(DurationUnit.MICROSECONDS).inWholeMilliseconds)
         assertEquals(Long.MAX_VALUE / 1000 * 1000, Long.MAX_VALUE.toDuration(DurationUnit.MICROSECONDS).toLong(DurationUnit.MICROSECONDS))
 
