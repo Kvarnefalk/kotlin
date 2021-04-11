@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 
 object WhenExpressionChecker : FirExpressionChecker<FirWhenExpression>() {
     override fun check(expression: FirWhenExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        TODO("Not yet implemented")
     }
 
 }

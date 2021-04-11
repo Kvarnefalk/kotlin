@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 
 object FunctionCallChecker : FirExpressionChecker<FirFunctionCall>() {
     override fun check(expression: FirFunctionCall, context: CheckerContext, reporter: DiagnosticReporter) {
-        TODO("Not yet implemented")
     }
 
 }

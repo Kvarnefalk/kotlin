@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 
 object QualifiedAccessChecker : FirExpressionChecker<FirQualifiedAccessExpression>() {
     override fun check(expression: FirQualifiedAccessExpression, context: CheckerContext, reporter: DiagnosticReporter) {
-        TODO("Not yet implemented")
     }
 
 }

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
 
 object VariableAssignmentChecker : FirExpressionChecker<FirVariableAssignment>() {
     override fun check(expression: FirVariableAssignment, context: CheckerContext, reporter: DiagnosticReporter) {
-        TODO("Not yet implemented")
     }
 
 }

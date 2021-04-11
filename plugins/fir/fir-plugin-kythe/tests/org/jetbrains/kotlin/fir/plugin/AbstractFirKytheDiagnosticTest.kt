@@ -5,15 +5,37 @@
 
 package org.jetbrains.kotlin.fir.plugin
 
+import org.jetbrains.kotlin.checkers.BaseDiagnosticsTest
 import org.jetbrains.kotlin.cli.jvm.config.addJvmClasspathRoot
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.fir.AbstractFirBaseDiagnosticsTest
 import org.jetbrains.kotlin.fir.AbstractFirDiagnosticsTest
+import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirFile
+import org.jetbrains.kotlin.fir.doFirResolveTestBench
 import org.jetbrains.kotlin.fir.extensions.BunchOfRegisteredExtensions
+import org.jetbrains.kotlin.fir.resolve.transformers.createAllCompilerResolveProcessors
 import java.io.File
 
-abstract class AbstractFirKytheDiagnosticTest : AbstractFirDiagnosticsTest() {
-    override val pluginPhasesEnabled: Boolean
+abstract class AbstractFirKytheDiagnosticTest : AbstractFirBaseDiagnosticsTest() {
+    val pluginPhasesEnabled: Boolean
         get() = true
+
+    override fun runAnalysis(testDataFile: File, testFiles: List<BaseDiagnosticsTest.TestFile>, firFilesPerSession: Map<FirSession, List<FirFile>>) {
+        for ((session, firFiles) in firFilesPerSession) {
+            doFirResolveTestBench(
+                firFiles,
+                createAllCompilerResolveProcessors(session, pluginPhasesEnabled = pluginPhasesEnabled),
+                gc = false
+            )
+        }
+        val allFirFiles = firFilesPerSession.values.flatten()
+        checkFir(testDataFile, allFirFiles)
+    }
+
+    fun checkFir(testDataFile: File, firFiles: List<FirFile>) {
+        print("Hello ${testDataFile.absolutePath}, ${firFiles.toString()}")
+    }
 
     override fun getFirExtensions(): BunchOfRegisteredExtensions {
         return KytheComponentRegistrar().configure()
@@ -27,4 +49,5 @@ abstract class AbstractFirKytheDiagnosticTest : AbstractFirDiagnosticsTest() {
         }
         configuration.addJvmClasspathRoot(jar)
     }
+
 }
