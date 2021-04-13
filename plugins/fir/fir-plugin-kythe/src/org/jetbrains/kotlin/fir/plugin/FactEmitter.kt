@@ -25,8 +25,3 @@ interface FactEmitter {
     }
 }
 
-object StreamEmitter : FactEmitter {
-    override fun emit(source: VName, edgeKind: String?, target: VName?, factName: String?, factValue: ByteArray?) {
-    }
-
-}

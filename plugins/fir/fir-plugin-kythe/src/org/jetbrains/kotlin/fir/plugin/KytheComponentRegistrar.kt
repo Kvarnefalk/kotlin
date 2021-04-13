@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
-class KytheComponentRegistrar(emitter: FactEmitter = StreamFactEmitter) : FirExtensionRegistrar() {
+class KytheComponentRegistrar() : FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::KytheAdditionalCheckers
     }
