@@ -44,12 +44,8 @@ abstract class AbstractFirKytheDiagnosticTest : AbstractFirDiagnosticsTest() {
     }
      */
 
-    fun checkFirr(testDataFile: File, firFiles: List<FirFile>) {
-        print("Hello ${testDataFile.absolutePath}, ${firFiles.toString()}")
-    }
-
     override fun getFirExtensions(): BunchOfRegisteredExtensions {
-        return KytheComponentRegistrar().configure()
+        return TestKytheComponentRegistrar().configure()
     }
 
     override fun updateConfiguration(configuration: CompilerConfiguration) {

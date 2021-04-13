@@ -15,14 +15,16 @@ import org.jetbrains.kotlin.fir.declarations.FirPluginKey
 import org.jetbrains.kotlin.fir.plugin.checkers.declaration.*
 import org.jetbrains.kotlin.fir.plugin.checkers.expression.*
 
-class KytheAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
+open class KytheAdditionalCheckers(session: FirSession) : FirAdditionalCheckersExtension(session) {
     override val key: FirPluginKey
         get() = KythePluginKey
 
-    var emitter: FactEmitter = StreamFactEmitter
+    open fun getEmitter(): FactEmitter {
+        return StreamFactEmitter
+    } 
 
     override val declarationCheckers: DeclarationCheckers = object : DeclarationCheckers() {
-        override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(MemberDeclarationChecker(emitter))
+        override val memberDeclarationCheckers: Set<FirMemberDeclarationChecker> = setOf(MemberDeclarationChecker(getEmitter()))
         override val basicDeclarationCheckers: Set<FirBasicDeclarationChecker> = setOf(BasicDeclarationChecker)
         override val functionCheckers: Set<FirFunctionChecker> = setOf(FunctionChecker)
         override val propertyCheckers: Set<FirPropertyChecker> = setOf(PropertyChecker)
