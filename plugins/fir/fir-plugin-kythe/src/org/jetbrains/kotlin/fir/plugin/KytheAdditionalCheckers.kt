@@ -19,7 +19,7 @@ open class KytheAdditionalCheckers(session: FirSession) : FirAdditionalCheckersE
     override val key: FirPluginKey
         get() = KythePluginKey
 
-    open fun getEmitter(): FactEmitter {
+    protected open fun getEmitter(): FactEmitter {
         return StreamFactEmitter
     } 
 
