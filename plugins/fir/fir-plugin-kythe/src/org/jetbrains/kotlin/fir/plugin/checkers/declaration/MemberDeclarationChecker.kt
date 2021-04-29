@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.plugin.VNameSignature
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 
-class MemberDeclarationChecker(val emitter: FactEmitter): FirMemberDeclarationChecker() {
+class MemberDeclarationChecker(var emitter: FactEmitter): FirMemberDeclarationChecker() {
     override fun check(declaration: FirMemberDeclaration, context: CheckerContext, reporter: DiagnosticReporter) {
         val filePath = declaration.source.psi?.containingFile?.containingDirectory?.name + declaration.source.psi?.containingFile?.name
         val test = declaration.source.psi?.containingFile?.virtualFile

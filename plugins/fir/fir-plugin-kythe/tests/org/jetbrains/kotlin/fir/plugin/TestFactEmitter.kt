@@ -5,9 +5,17 @@
 
 package org.jetbrains.kotlin.fir.plugin
 
-object TestFactEmitter: FactEmitter {
+import java.io.File
+
+class TestFactEmitter(private var testFilePath: String): FactEmitter {
     override fun emit(source: VName, edgeKind: String?, target: VName?, factName: String?, factValue: ByteArray?) {
-        println()
+        File(this.testFilePath).printWriter().use { out ->
+            out.println("KYTHE")
+        }
+    }
+
+    fun getTestFilePath(): String {
+        return this.testFilePath
     }
 
 }

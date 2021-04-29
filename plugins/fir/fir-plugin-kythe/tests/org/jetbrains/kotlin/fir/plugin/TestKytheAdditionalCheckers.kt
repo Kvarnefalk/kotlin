@@ -16,7 +16,21 @@ import org.jetbrains.kotlin.fir.plugin.checkers.declaration.*
 import org.jetbrains.kotlin.fir.plugin.checkers.expression.*
 
 class TestKytheAdditionalCheckers(session: FirSession) : KytheAdditionalCheckers(session) {
+
+    private var emitter: TestFactEmitter? = null
+
     override fun getEmitter(): FactEmitter {
-        return TestFactEmitter
+        if (emitter == null) {
+            val file = java.io.File.createTempFile("test-kythe-", ".facts")
+            emitter = TestFactEmitter(file.absolutePath)
+        }
+        return emitter!!
+    }
+
+    fun getTestEmitterFilePath(): String {
+        if (emitter != null) {
+            return emitter!!.getTestFilePath()
+        }
+        return ""
     }
 }

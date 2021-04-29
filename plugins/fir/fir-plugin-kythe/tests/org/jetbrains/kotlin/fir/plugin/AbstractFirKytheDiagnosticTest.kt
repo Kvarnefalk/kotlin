@@ -44,15 +44,30 @@ abstract class AbstractFirKytheDiagnosticTest : AbstractFirBaseDiagnosticsTest()
         collectDiagnostics(allFirFiles)
     }
 
+    @OptIn(PluginServicesInitialization::class)
     fun collectDiagnostics(firFiles: List<FirFile>): Map<FirFile, List<FirDiagnostic<*>>> {
         val collectors = mutableMapOf<FirSession, AbstractDiagnosticCollector>()
         val result = mutableMapOf<FirFile, List<FirDiagnostic<*>>>()
-
+        var testPath: String? = null
         for (firFile in firFiles) {
+
             val session = firFile.session
+
+            val extensions = session.extensionService.getAllExtensions()
+            // TODO:
+            // Generate temp file that we add to the emitter to print to
+            extensions.first().let {
+                if (it is TestKytheAdditionalCheckers) {
+                    val checker: TestKytheAdditionalCheckers = it
+                    testPath = checker.getTestEmitterFilePath()
+                }
+            }
             val collector = collectors.computeIfAbsent(session) { createCollector(session) }
             print(collector.toString())
+            print(testPath)
             result[firFile] = collector.collectDiagnostics(firFile).toList()
+            val txt = File(testPath).readText()
+            print (txt)
         }
         return result
     }

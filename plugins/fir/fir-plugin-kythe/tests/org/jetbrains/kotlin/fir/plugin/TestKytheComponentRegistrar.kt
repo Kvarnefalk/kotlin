@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.fir.plugin
 
 import org.jetbrains.kotlin.fir.extensions.FirExtensionRegistrar
 
-class TestKytheComponentRegistrar() : FirExtensionRegistrar() {
+class TestKytheComponentRegistrar: FirExtensionRegistrar() {
     override fun ExtensionRegistrarContext.configurePlugin() {
         +::TestKytheAdditionalCheckers
     }
